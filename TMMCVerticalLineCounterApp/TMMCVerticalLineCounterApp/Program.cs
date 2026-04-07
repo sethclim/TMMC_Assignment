@@ -12,4 +12,3 @@ var host = Host.CreateDefaultBuilder(args)
 var app = host.Services.GetRequiredService<App>();
 
 await app.Run();
-
