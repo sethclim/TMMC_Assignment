@@ -1,20 +1,43 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.CommandLine;
 using TMMCVerticalLineCounterApp;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((context, services) =>
-    {  
-        services.AddSingleton<App>();
-    })
-    .ConfigureAppConfiguration((context, config) =>
-    {
-        config.AddCommandLine(args);
-    })
-    .Build();
+var fileNameOption = new Option<string>(
+    "--fileName")
+{
+    Required = true,
+    Description = "Path/to/file"
+};
 
-var app = host.Services.GetRequiredService<App>();
-var configuration = host.Services.GetRequiredService<IConfiguration>();
+var rootCommand = new RootCommand("My Vertical Line Counter App")
+{
+    fileNameOption
+};
 
-await app.Run();
+rootCommand.SetAction(parseResult =>
+{
+    string fileName = parseResult.GetValue(fileNameOption)!;
+
+    if (string.IsNullOrWhiteSpace(fileName))
+        throw new ArgumentException("Exactly one command-line argument is required (e.g., --fileName <path/to/file>)");
+
+    // Build the host
+    var host = Host.CreateDefaultBuilder()
+        .ConfigureAppConfiguration((context, config) =>
+        {
+            config.AddCommandLine(new[] { $"--fileName={fileName}" });
+        })
+        .ConfigureServices((context, services) =>
+        {
+            services.AddSingleton<App>();
+        })
+        .Build();
+
+    var app = host.Services.GetRequiredService<App>();
+    app.Run().GetAwaiter().GetResult();
+});
+
+var parseResult = rootCommand.Parse(args);
+parseResult.Invoke();
