@@ -1,20 +1,52 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.CommandLine;
 using TMMCVerticalLineCounterApp;
+using TMMCVerticalLineCounterApp.Services;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((context, services) =>
-    {  
-        services.AddSingleton<App>();
-    })
-    .ConfigureAppConfiguration((context, config) =>
+var fileNameOption = new Option<string>(
+    "--fileName")
+{
+    Required = true,
+    Description = "Path/to/file"
+};
+
+var rootCommand = new RootCommand("My Vertical Line Counter App")
+{
+    fileNameOption
+};
+
+rootCommand.SetAction(parseResult =>
+{
+    try
     {
-        config.AddCommandLine(args);
-    })
-    .Build();
+        string fileName = parseResult.GetValue(fileNameOption)!;
 
-var app = host.Services.GetRequiredService<App>();
-var configuration = host.Services.GetRequiredService<IConfiguration>();
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new ArgumentException("Exactly one command-line argument is required (e.g., --fileName <path/to/file>)");
 
-await app.Run();
+        var host = Host.CreateDefaultBuilder()
+            .ConfigureAppConfiguration((context, config) =>
+            {
+                _ = config.AddCommandLine([$"--fileName={fileName}"]);
+            })
+            .ConfigureServices((context, services) =>
+            {
+                services.AddSingleton<IImageLoader, JpegImageLoader>();
+                services.AddSingleton<App>();
+            })
+            .Build();
+
+        var app = host.Services.GetRequiredService<App>();
+        app.Run().GetAwaiter().GetResult();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Fatal error: {ex.Message}");
+        Environment.Exit(1);
+    }
+});
+
+var parseResult = rootCommand.Parse(args);
+parseResult.Invoke();
