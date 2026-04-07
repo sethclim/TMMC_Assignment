@@ -34,6 +34,7 @@ rootCommand.SetAction(parseResult =>
             .ConfigureServices((context, services) =>
             {
                 services.AddSingleton<IImageLoader, JpegImageLoader>();
+                services.AddSingleton<IImageProcessor, ImageProcessor>();
                 services.AddSingleton<App>();
             })
             .Build();
