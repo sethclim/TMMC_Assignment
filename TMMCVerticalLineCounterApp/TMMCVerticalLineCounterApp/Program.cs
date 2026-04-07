@@ -19,25 +19,33 @@ var rootCommand = new RootCommand("My Vertical Line Counter App")
 
 rootCommand.SetAction(parseResult =>
 {
-    string fileName = parseResult.GetValue(fileNameOption)!;
+    try
+    {
+        string fileName = parseResult.GetValue(fileNameOption)!;
 
-    if (string.IsNullOrWhiteSpace(fileName))
-        throw new ArgumentException("Exactly one command-line argument is required (e.g., --fileName <path/to/file>)");
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new ArgumentException("Exactly one command-line argument is required (e.g., --fileName <path/to/file>)");
 
-    var host = Host.CreateDefaultBuilder()
-        .ConfigureAppConfiguration((context, config) =>
-        {
-            _ = config.AddCommandLine([$"--fileName={fileName}"]);
-        })
-        .ConfigureServices((context, services) =>
-        {
-            services.AddSingleton<IImageLoader, JpegImageLoader>();
-            services.AddSingleton<App>();
-        })
-        .Build();
+        var host = Host.CreateDefaultBuilder()
+            .ConfigureAppConfiguration((context, config) =>
+            {
+                _ = config.AddCommandLine([$"--fileName={fileName}"]);
+            })
+            .ConfigureServices((context, services) =>
+            {
+                services.AddSingleton<IImageLoader, JpegImageLoader>();
+                services.AddSingleton<App>();
+            })
+            .Build();
 
-    var app = host.Services.GetRequiredService<App>();
-    app.Run().GetAwaiter().GetResult();
+        var app = host.Services.GetRequiredService<App>();
+        app.Run().GetAwaiter().GetResult();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Fatal error: {ex.Message}");
+        Environment.Exit(1);
+    }
 });
 
 var parseResult = rootCommand.Parse(args);
