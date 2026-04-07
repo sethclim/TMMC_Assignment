@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TMMCVerticalLineCounterApp.Models
+﻿namespace TMMCVerticalLineCounterApp.Models
 {
     internal class ImageData
     {
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public required byte[] Pixels { get; set; }
     }
 }
+
