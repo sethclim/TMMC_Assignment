@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "TMMCVerticalLineCounterApp": {
+      "commandName": "Project",
+      "commandLineArgs": "--fileName img_1.jpg",
+      "workingDirectory": "C:\\Users\\sethc\\coding\\TMMC_Assignment\\test_inputs"
+    }
+  }
+}

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.CommandLine;
 using TMMCVerticalLineCounterApp;
+using TMMCVerticalLineCounterApp.Services;
 
 var fileNameOption = new Option<string>(
     "--fileName")
@@ -23,14 +24,14 @@ rootCommand.SetAction(parseResult =>
     if (string.IsNullOrWhiteSpace(fileName))
         throw new ArgumentException("Exactly one command-line argument is required (e.g., --fileName <path/to/file>)");
 
-    // Build the host
     var host = Host.CreateDefaultBuilder()
         .ConfigureAppConfiguration((context, config) =>
         {
-            config.AddCommandLine(new[] { $"--fileName={fileName}" });
+            _ = config.AddCommandLine([$"--fileName={fileName}"]);
         })
         .ConfigureServices((context, services) =>
         {
+            services.AddSingleton<IImageLoader, JpegImageLoader>();
             services.AddSingleton<App>();
         })
         .Build();
