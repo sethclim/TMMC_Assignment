@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using TMMCVerticalLineCounterApp.Models;
 
 namespace TMMCVerticalLineCounterApp.Services
@@ -43,7 +42,6 @@ namespace TMMCVerticalLineCounterApp.Services
         public int Process(ImageData image)
         {
             _logger.LogInformation("Processing image...");
-            var sw = Stopwatch.StartNew();
 
             if (image.Width == 0 || image.Height == 0 || image.Pixels.Length == 0)
                 throw new ArgumentException("Image cannot be empty.", nameof(image));
@@ -58,14 +56,9 @@ namespace TMMCVerticalLineCounterApp.Services
 
                 // entered a bar, count it
                 if(s > 0 && prev == 0)
-                {
                     barCount++;
-                }
                 prev = s;
             }
-
-            sw.Stop();
-            _logger.LogInformation("Image processed in {ms} ms (total)", sw.ElapsedMilliseconds);
 
             return barCount;
         }
