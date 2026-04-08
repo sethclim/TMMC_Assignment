@@ -7,6 +7,13 @@ namespace TMMCVerticalLineCounterApp.Services
     {
         private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
 
+        /// <summary>
+        /// Projects a 2D image onto a 1D horizontal signal by aggregating pixel brightness vertically.
+        /// For each column, pixel RGB values are converted to a normalized darkness value,
+        /// then summed to produce a column intensity. 
+        /// </summary>
+        /// <param name="image">ImageData containing Width, Height, and RGBA pixels</param>
+        /// <returns>Array where each index corresponds to a column intensity</returns>
         static int[] ConvertToSignal(ImageData image)
         {
             int[] res = new int[image.Width];
@@ -32,6 +39,11 @@ namespace TMMCVerticalLineCounterApp.Services
             return res;
         }
 
+        /// <summary>
+        /// Counts the number of black bars in the supplied image data
+        /// </summary>
+        /// <param name="image">data from image to process</param>
+        /// <returns>number of counted bars</returns>
         public int Process(ImageData image)
         {
             _logger.LogInformation("Processing image...");

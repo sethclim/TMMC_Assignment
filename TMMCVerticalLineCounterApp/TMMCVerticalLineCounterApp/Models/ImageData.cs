@@ -1,5 +1,8 @@
 ﻿namespace TMMCVerticalLineCounterApp.Models
 {
+    /// <summary>
+    /// Represents raw image data including width, height, and RGBA pixels.
+    /// </summary>
     internal class ImageData
     {
         public int Width { get; set; }

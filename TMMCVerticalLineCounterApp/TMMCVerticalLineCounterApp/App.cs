@@ -20,6 +20,9 @@ namespace TMMCVerticalLineCounterApp
             _logger = logger;
         }
 
+        /// <summary>
+        /// Runs the app: validates the filePath, loads the image, counts vertical bars, and logs the result.
+        /// </summary>
         public Task Run()
         {
             _logger.LogInformation("Running App...");
