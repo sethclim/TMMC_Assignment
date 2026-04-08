@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using TMMCVerticalLineCounterApp.Models;
 
 namespace TMMCVerticalLineCounterApp.Services
@@ -18,21 +19,16 @@ namespace TMMCVerticalLineCounterApp.Services
         {
             int[] res = new int[image.Width];
             for (int x = 0; x < image.Width; x++)
-            {
+            { 
+                int count = 0;
                 for (int y = 0; y < image.Height; y++)
                 {
                     int i = (y * image.Width + x) * 4;
-                    byte r = image.Pixels[i + 0];
-                    byte g = image.Pixels[i + 1];
-                    byte b = image.Pixels[i + 2];
-                    byte a = image.Pixels[i + 3];
 
-                    int sum = r + g + b;
+                    if (image.Pixels[i] == 0 && image.Pixels[i + 1] == 0 && image.Pixels[i + 2] == 0)
+                        count++;
 
-                    int normalized = (int)(1f - (sum / 765f));
-
-                    res[x] += normalized;
-
+                    res[x] = count;
                 }
             }
 
@@ -47,12 +43,14 @@ namespace TMMCVerticalLineCounterApp.Services
         public int Process(ImageData image)
         {
             _logger.LogInformation("Processing image...");
+            var sw = Stopwatch.StartNew();
+
             if (image.Width == 0 || image.Height == 0 || image.Pixels.Length == 0)
                 throw new ArgumentException("Image cannot be empty.", nameof(image));
 
             int[] signal = ConvertToSignal(image);
 
-            int count = 0;
+            int barCount = 0;
             int prev = 0;
             for (int i = 0; i < signal.Length; i++)
             {
@@ -61,12 +59,15 @@ namespace TMMCVerticalLineCounterApp.Services
                 // entered a bar, count it
                 if(s > 0 && prev == 0)
                 {
-                    count++;
+                    barCount++;
                 }
                 prev = s;
             }
 
-            return count;
+            sw.Stop();
+            _logger.LogInformation("Image processed in {ms} ms (total)", sw.ElapsedMilliseconds);
+
+            return barCount;
         }
     }
 }
