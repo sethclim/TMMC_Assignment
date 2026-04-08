@@ -7,7 +7,6 @@ namespace TMMCVerticalLineCounterApp.Services
         int[] ConvertToSignal(ImageData image)
         {
             int[] res = new int[image.Width];
-            Console.WriteLine($"res: {res.Length}");
             for (int x = 0; x < image.Width; x++)
             {
                 for (int y = 0; y < image.Height; y++)
@@ -18,18 +17,13 @@ namespace TMMCVerticalLineCounterApp.Services
                     byte b = image.Pixels[i + 2];
                     byte a = image.Pixels[i + 3];
 
-                    //Console.WriteLine($"Pixel ({x},{y}) = R:{r} G:{g} B:{b} A:{a}");
-
                     int sum = r + g + b;
-
-                    //Console.WriteLine($"sum: {sum}");
 
                     int normalized = (int)(1f - (sum / 765f));
 
                     res[x] += normalized;
 
                 }
-                Console.WriteLine($"res: {res[x]}");
             }
 
             return res;
@@ -37,8 +31,6 @@ namespace TMMCVerticalLineCounterApp.Services
 
         public int Process(ImageData image)
         {
-            Console.WriteLine($"width: {image.Width}");
-
             int[] signal = ConvertToSignal(image);
 
             int count = 0;
@@ -47,14 +39,10 @@ namespace TMMCVerticalLineCounterApp.Services
             {
                 int s = signal[i];
 
+                // entered a bar, count it
                 if(s > 0 && prev == 0)
                 {
-                    Console.WriteLine($"entering bar!");
                     count++;
-                }
-                else if (s == 0 && prev > 0)
-                {
-                    Console.WriteLine($"left bar!");
                 }
                 prev = s;
             }
