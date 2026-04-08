@@ -6,41 +6,36 @@
         public class ImageProcessor(ILoggerFactory loggerFactory) : IImageProcessor
         {
             private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
-            // minimum Length vertical line need to be longer than to be counted
-            private readonly static int _lineLengthMinThreshold = 1;
-
 
             /// <summary>
-            /// Detects which columns contain a vertical black bar
-            /// Only checks the top half of the image leveraging vertically symmetrical input 
-            /// Stops checking each column once a minimum threshold for line length is reached
+            /// Detects which columns contain a vertical black bar.
+            /// Only checks the top half of the image, leveraging the fact that lines are vertically symmetrical.
+            /// A column is considered a black bar if **any black pixel** is found in the top half of that column.
+            /// The loop breaks early once a black pixel is found for efficiency.
             /// </summary>
             /// <param name="image">ImageData containing Width, Height, and RGBA pixels</param>
-            /// <returns>Array where each index corresponds to a black column existing or not</returns>
+            /// <returns>Array where each index corresponds to whether the column contains a black bar (true/false)</returns>
             static bool[] DetectBlackBarsPerColumn(ImageData image)
             {
                 bool[] res = new bool[image.Width];
                 int halfCeil = (image.Height + 1) / 2;
 
-                //if image is 1d or height of two, consider a "line" to be single pixel
-                int lineLengthMinThreshold = image.Height < 2 ? 0 : _lineLengthMinThreshold;
-
                 for (int x = 0; x < image.Width; x++)
                 { 
-                    int count = 0;
+                    bool found = false;
                     for (int y = 0; y < halfCeil; y++)
                     {
                         int i = (y * image.Width + x) * 4;
 
                         if (image.Pixels[i] == 0 && image.Pixels[i + 1] == 0 && image.Pixels[i + 2] == 0)
-                            count++;
-
-                        if(count > lineLengthMinThreshold)
+                        {
+                            found = true;
                             break;
+                        }
                     }
-                    res[x] = count > lineLengthMinThreshold;
+                    res[x] = found;
                 }
-
+  
                 return res;
             }
 
@@ -58,15 +53,7 @@
 
                 bool[] detectedBars = DetectBlackBarsPerColumn(image);
 
-                // Print each column as 0/1 or T/F
-                Console.WriteLine("Detected columns:");
-                for (int x = 0; x < detectedBars.Length; x++)
-                {
-                    Console.Write(detectedBars[x] ? "1" : "0");
-                }
-                Console.WriteLine(); // newline at end
-
-            int barCount = 0;
+                int barCount = 0;
                 bool prev = false;
                 for (int i = 0; i < detectedBars.Length; i++)
                 {
