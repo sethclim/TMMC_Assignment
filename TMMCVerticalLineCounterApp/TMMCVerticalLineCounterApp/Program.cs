@@ -47,7 +47,11 @@ rootCommand.SetAction(parseResult =>
     }
     catch (Exception ex)
     {
-        Console.Error.WriteLine($"Fatal error: {ex.Message}");
+        var prevColor = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Error.Write("Fatal error: ");
+        Console.ForegroundColor = prevColor;
+        Console.Error.WriteLine(ex.Message);
         Environment.Exit(1);
     }
 });

@@ -10,7 +10,7 @@ namespace TMMCVerticalLineCounterApp.Services
         private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(JpegImageLoader));
 
         /// <summary>
-        /// Loads an Image from a provided path and return metadata + pixels
+        /// Loads an image from the specified file path and returns its metadata and pixel data.
         /// </summary>
         /// <param name="path">Absolute path to an image file</param>
         /// <returns>ImageData containing Width, Height, and RGBA pixels</returns>
