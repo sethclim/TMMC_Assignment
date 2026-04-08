@@ -6,6 +6,7 @@
         public class ImageProcessor(ILoggerFactory loggerFactory) : IImageProcessor
         {
             private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
+            private static readonly int _blackThreshold = 10;
 
             /// <summary>
             /// Detects which columns contain a vertical black bar.
@@ -27,7 +28,9 @@
                     {
                         int i = (y * image.Width + x) * 4;
 
-                        if (image.Pixels[i] == 0 && image.Pixels[i + 1] == 0 && image.Pixels[i + 2] == 0)
+                        if (image.Pixels[i] <= _blackThreshold && 
+                            image.Pixels[i + 1] <= _blackThreshold && 
+                            image.Pixels[i + 2] <= _blackThreshold)
                         {
                             found = true;
                             break;
