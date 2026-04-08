@@ -3,7 +3,7 @@ using TMMCVerticalLineCounterApp.Models;
 
 namespace TMMCVerticalLineCounterApp.Services
 {
-    internal class ImageProcessor(ILoggerFactory loggerFactory) : IImageProcessor
+    public class ImageProcessor(ILoggerFactory loggerFactory) : IImageProcessor
     {
         private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
 
@@ -47,6 +47,9 @@ namespace TMMCVerticalLineCounterApp.Services
         public int Process(ImageData image)
         {
             _logger.LogInformation("Processing image...");
+            if (image.Width == 0 || image.Height == 0 || image.Pixels.Length == 0)
+                throw new ArgumentException("Image cannot be empty.", nameof(image));
+
             int[] signal = ConvertToSignal(image);
 
             int count = 0;

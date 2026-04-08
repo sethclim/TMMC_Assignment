@@ -5,7 +5,7 @@ using TMMCVerticalLineCounterApp.Models;
 
 namespace TMMCVerticalLineCounterApp.Services
 {
-    internal class JpegImageLoader(ILoggerFactory loggerFactory) : IImageLoader
+    public class JpegImageLoader(ILoggerFactory loggerFactory) : IImageLoader
     {
         private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(JpegImageLoader));
 

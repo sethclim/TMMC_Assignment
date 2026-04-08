@@ -2,9 +2,9 @@
 
 namespace TMMCVerticalLineCounterApp.Services
 {
-    internal interface IImageProcessor
+    public interface IImageProcessor
     {
-        int Process(ImageData image);
+        public int Process(ImageData image);
     }
 }
 
