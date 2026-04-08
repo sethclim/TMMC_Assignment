@@ -27,12 +27,14 @@ namespace TMMCVerticalLineCounterApp.Tests
         {
             var pixels = new byte[]
             {
-                0,0,0,255, 255,255,255,255, 0,0,0,255, // simple 3x1 image
+                0,0,0,255, 255,255,255,255, 0,0,0,255, // simple 3x3 image
+                0,0,0,255, 255,255,255,255, 0,0,0,255,
+                0,0,0,255, 255,255,255,255, 0,0,0,255,
             };
             var image = new ImageData
             {
                 Width = 3,
-                Height = 1,
+                Height = 3,
                 Pixels = pixels
             };
 
