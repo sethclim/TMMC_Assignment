@@ -30,7 +30,9 @@ namespace TMMCVerticalLineCounterApp
 
             Console.WriteLine($"imageData length: {imageData.Pixels.Length}!");
 
-            _processor.Process(imageData);
+            int count = _processor.Process(imageData);
+
+            Console.WriteLine($"count: {count}!");
 
             return Task.CompletedTask;
         }

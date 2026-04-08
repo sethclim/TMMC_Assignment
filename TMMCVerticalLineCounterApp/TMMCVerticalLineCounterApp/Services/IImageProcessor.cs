@@ -4,7 +4,7 @@ namespace TMMCVerticalLineCounterApp.Services
 {
     internal interface IImageProcessor
     {
-        void Process(ImageData image);
+        int Process(ImageData image);
     }
 }
 
