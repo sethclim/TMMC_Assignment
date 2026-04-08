@@ -6,6 +6,8 @@ namespace TMMCVerticalLineCounterApp.Services
     public class ImageProcessor(ILoggerFactory loggerFactory) : IImageProcessor
     {
         private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
+        private readonly static int _lineLengthMinThreshold = 1;
+        
 
         /// <summary>
         /// Projects a 2D image onto a 1D horizontal signal by aggregating pixel brightness vertically.
@@ -20,15 +22,17 @@ namespace TMMCVerticalLineCounterApp.Services
             for (int x = 0; x < image.Width; x++)
             { 
                 int count = 0;
-                for (int y = 0; y < image.Height; y++)
+                for (int y = 0; y < image.Height / 2; y++)
                 {
                     int i = (y * image.Width + x) * 4;
 
                     if (image.Pixels[i] == 0 && image.Pixels[i + 1] == 0 && image.Pixels[i + 2] == 0)
                         count++;
 
-                    res[x] = count;
+                    if(count > _lineLengthMinThreshold)
+                        break;
                 }
+                res[x] = count;
             }
 
             return res;
