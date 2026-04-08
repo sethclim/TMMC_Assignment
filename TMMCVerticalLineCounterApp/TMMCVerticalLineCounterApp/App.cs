@@ -7,12 +7,14 @@ namespace TMMCVerticalLineCounterApp
     {
         private readonly IConfiguration _config;
         private readonly IImageLoader _loader;
+        private readonly IImageProcessor _processor;
 
-        public App(IConfiguration config, IImageLoader loader)
+        public App(IConfiguration config, IImageLoader loader, IImageProcessor processor)
         {
             Console.WriteLine("Initializing App...");
             _config = config;
             _loader = loader;
+            _processor = processor;
         }
 
         public Task Run()
@@ -27,6 +29,10 @@ namespace TMMCVerticalLineCounterApp
             Models.ImageData imageData = _loader.Load(fileName);
 
             Console.WriteLine($"imageData length: {imageData.Pixels.Length}!");
+
+            int count = _processor.Process(imageData);
+
+            Console.WriteLine($"count: {count}!");
 
             return Task.CompletedTask;
         }

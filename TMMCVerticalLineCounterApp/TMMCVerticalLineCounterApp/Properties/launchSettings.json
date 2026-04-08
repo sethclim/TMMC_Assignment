@@ -2,7 +2,7 @@
   "profiles": {
     "TMMCVerticalLineCounterApp": {
       "commandName": "Project",
-      "commandLineArgs": "--fileName img_1.jpg",
+      "commandLineArgs": "--fileName img_4.jpg",
       "workingDirectory": "C:\\Users\\sethc\\coding\\TMMC_Assignment\\test_inputs"
     }
   }
