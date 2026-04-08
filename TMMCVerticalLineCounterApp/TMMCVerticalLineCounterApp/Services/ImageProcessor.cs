@@ -6,17 +6,18 @@ namespace TMMCVerticalLineCounterApp.Services
     public class ImageProcessor(ILoggerFactory loggerFactory) : IImageProcessor
     {
         private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
+        // minimum Length vertical line need to be longer than to be counted
         private readonly static int _lineLengthMinThreshold = 1;
-        
+
 
         /// <summary>
-        /// Projects a 2D image onto a 1D horizontal signal by aggregating pixel brightness vertically.
-        /// For each column, pixel RGB values are converted to a normalized darkness value,
-        /// then summed to produce a column intensity. 
+        /// Detects which columns contain a vertical black bar
+        /// Only checks the top half of the image leveraging vertically symmetrical input 
+        /// Stops checking each column once a minimum threshold for line length is reached
         /// </summary>
         /// <param name="image">ImageData containing Width, Height, and RGBA pixels</param>
-        /// <returns>Array where each index corresponds to a column intensity</returns>
-        static int[] ConvertToSignal(ImageData image)
+        /// <returns>Array where each index corresponds to a black column existing or not</returns>
+        static int[] DetectBlackBarsPerColumn(ImageData image)
         {
             int[] res = new int[image.Width];
             for (int x = 0; x < image.Width; x++)
@@ -50,18 +51,18 @@ namespace TMMCVerticalLineCounterApp.Services
             if (image.Width == 0 || image.Height == 0 || image.Pixels.Length == 0)
                 throw new ArgumentException("Image cannot be empty.", nameof(image));
 
-            int[] signal = ConvertToSignal(image);
+            int[] detectedBars = DetectBlackBarsPerColumn(image);
 
             int barCount = 0;
             int prev = 0;
-            for (int i = 0; i < signal.Length; i++)
+            for (int i = 0; i < detectedBars.Length; i++)
             {
-                int s = signal[i];
+                int potentialBar = detectedBars[i];
 
                 // entered a bar, count it
-                if(s > 0 && prev == 0)
+                if(potentialBar > 0 && prev == 0)
                     barCount++;
-                prev = s;
+                prev = potentialBar;
             }
 
             return barCount;
