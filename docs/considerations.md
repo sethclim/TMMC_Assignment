@@ -10,3 +10,5 @@
     - Lines are vertically symmetrical
     - Background is pure white
     - Lines are continuous and made with the bucket tool
+
+    Addendum: After introducing a black threshold (to include near-black pixels), I realized that the original minimum black pixel count per column is still relevant for filtering out false positives. Re-adding it lets both checks work together, providing robustness by counting near-black pixels while still ignoring random noise.

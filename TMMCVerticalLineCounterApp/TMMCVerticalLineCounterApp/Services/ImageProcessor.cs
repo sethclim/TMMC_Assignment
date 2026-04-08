@@ -7,12 +7,14 @@
         {
             private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
             private static readonly int _blackThreshold = 10;
+            // minimum Length vertical line need to be longer than to be counted
+            private static readonly int _lineLengthMinThreshold = 1;
 
             /// <summary>
             /// Detects which columns contain a vertical black bar.
             /// Only checks the top half of the image, leveraging the fact that lines are vertically symmetrical.
-            /// A column is considered a black bar if **any black pixel** is found in the top half of that column.
-            /// The loop breaks early once a black pixel is found for efficiency.
+            /// A column is considered a black bar if the number of pixels darker than the black threshold exceeds the minimum line length threshold.
+            /// The loop breaks early once enough black pixels are found for efficiency.
             /// </summary>
             /// <param name="image">ImageData containing Width, Height, and RGBA pixels</param>
             /// <returns>Array where each index corresponds to whether the column contains a black bar (true/false)</returns>
@@ -21,22 +23,26 @@
                 bool[] res = new bool[image.Width];
                 int halfCeil = (image.Height + 1) / 2;
 
+                //if image is 1d or height of two, consider a "line" to be single pixel
+                int lineLengthMinThreshold = image.Height < 2 ? 0 : _lineLengthMinThreshold;
+
                 for (int x = 0; x < image.Width; x++)
                 { 
-                    bool found = false;
+                    int count = 0;
                     for (int y = 0; y < halfCeil; y++)
                     {
                         int i = (y * image.Width + x) * 4;
 
-                        if (image.Pixels[i] <= _blackThreshold && 
-                            image.Pixels[i + 1] <= _blackThreshold && 
+                        if (image.Pixels[i] <= _blackThreshold &&
+                            image.Pixels[i + 1] <= _blackThreshold &&
                             image.Pixels[i + 2] <= _blackThreshold)
-                        {
-                            found = true;
+                            count++;
+
+                        if (count > lineLengthMinThreshold)
                             break;
-                        }
                     }
-                    res[x] = found;
+
+                    res[x] = count > lineLengthMinThreshold;
                 }
   
                 return res;
