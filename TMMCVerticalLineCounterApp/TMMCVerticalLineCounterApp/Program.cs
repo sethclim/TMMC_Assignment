@@ -9,7 +9,7 @@ var fileNameOption = new Option<string>(
     "--fileName")
 {
     Required = true,
-    Description = "Path/to/file"
+    Description = "Absolute path to file e.g. C:\\TMMC_interview_assignment\\img_1.jpg"
 };
 
 var rootCommand = new RootCommand("My Vertical Line Counter App")
@@ -44,7 +44,7 @@ rootCommand.SetAction(parseResult =>
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Fatal error: {ex.Message}");
+        Console.Error.WriteLine($"Fatal error: {ex.Message}");
         Environment.Exit(1);
     }
 });

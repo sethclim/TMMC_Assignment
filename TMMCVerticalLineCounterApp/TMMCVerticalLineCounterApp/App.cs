@@ -1,38 +1,44 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using TMMCVerticalLineCounterApp.Services;
 
 namespace TMMCVerticalLineCounterApp
 {
     internal class App
     {
+        private readonly ILogger<App> _logger;
         private readonly IConfiguration _config;
         private readonly IImageLoader _loader;
         private readonly IImageProcessor _processor;
 
-        public App(IConfiguration config, IImageLoader loader, IImageProcessor processor)
+        public App(ILogger<App> logger, IConfiguration config, IImageLoader loader, IImageProcessor processor)
         {
-            Console.WriteLine("Initializing App...");
+            logger.LogInformation("Initializing App...");
             _config = config;
             _loader = loader;
             _processor = processor;
+            _logger = logger;
         }
 
         public Task Run()
         {
-            Console.WriteLine("Running App...");
+            _logger.LogInformation("Running App...");
 
             string fileName = _config["fileName"]
                ?? throw new InvalidOperationException("fileName is required");
 
-            Console.WriteLine($"Loading {fileName}!");
+
+            if (!Path.IsPathFullyQualified(fileName))
+            {
+                _logger.LogError($"Supplied filePath must be absolute: {fileName}");
+                return Task.FromResult(1);
+            }
 
             Models.ImageData imageData = _loader.Load(fileName);
 
-            Console.WriteLine($"imageData length: {imageData.Pixels.Length}!");
-
             int count = _processor.Process(imageData);
 
-            Console.WriteLine($"count: {count}!");
+            _logger.LogInformation($"Number of vertical bars in {fileName} is {count}!");
 
             return Task.CompletedTask;
         }

@@ -1,10 +1,13 @@
-﻿using TMMCVerticalLineCounterApp.Models;
+﻿using Microsoft.Extensions.Logging;
+using TMMCVerticalLineCounterApp.Models;
 
 namespace TMMCVerticalLineCounterApp.Services
 {
-    internal class ImageProcessor : IImageProcessor
+    internal class ImageProcessor(ILoggerFactory loggerFactory) : IImageProcessor
     {
-        int[] ConvertToSignal(ImageData image)
+        private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(ImageProcessor));
+
+        static int[] ConvertToSignal(ImageData image)
         {
             int[] res = new int[image.Width];
             for (int x = 0; x < image.Width; x++)
@@ -31,6 +34,7 @@ namespace TMMCVerticalLineCounterApp.Services
 
         public int Process(ImageData image)
         {
+            _logger.LogInformation("Processing image...");
             int[] signal = ConvertToSignal(image);
 
             int count = 0;
