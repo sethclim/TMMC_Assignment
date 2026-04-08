@@ -9,7 +9,7 @@ var fileNameOption = new Option<string>(
     "--fileName")
 {
     Required = true,
-    Description = "Path/to/file"
+    Description = "Absolute path to file e.g. C:\\TMMC_interview_assignment\\img_1.jpg"
 };
 
 var rootCommand = new RootCommand("My Vertical Line Counter App")
@@ -17,14 +17,17 @@ var rootCommand = new RootCommand("My Vertical Line Counter App")
     fileNameOption
 };
 
+/// <summary>
+/// Sets up the root command to accept a single --fileName argument. 
+/// Builds a DI host with services, retrieves and runs the main App instance. 
+/// Any exceptions thrown during execution are caught and reported.
+/// The parser automatically enforces that --fileName is provided.
+/// </summary>
 rootCommand.SetAction(parseResult =>
 {
     try
     {
         string fileName = parseResult.GetValue(fileNameOption)!;
-
-        if (string.IsNullOrWhiteSpace(fileName))
-            throw new ArgumentException("Exactly one command-line argument is required (e.g., --fileName <path/to/file>)");
 
         var host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, config) =>
@@ -44,7 +47,7 @@ rootCommand.SetAction(parseResult =>
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Fatal error: {ex.Message}");
+        Console.Error.WriteLine($"Fatal error: {ex.Message}");
         Environment.Exit(1);
     }
 });
