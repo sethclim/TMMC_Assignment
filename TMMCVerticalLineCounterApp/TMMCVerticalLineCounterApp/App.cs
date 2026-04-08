@@ -4,7 +4,7 @@ using TMMCVerticalLineCounterApp.Services;
 
 namespace TMMCVerticalLineCounterApp
 {
-    internal class App
+    public class App
     {
         private readonly ILogger<App> _logger;
         private readonly IConfiguration _config;
@@ -23,7 +23,7 @@ namespace TMMCVerticalLineCounterApp
         /// <summary>
         /// Runs the app: validates the filePath, loads the image, counts vertical bars, and logs the result.
         /// </summary>
-        public Task Run()
+        public Task<int> Run()
         {
             _logger.LogInformation("Running App...");
 
@@ -34,7 +34,7 @@ namespace TMMCVerticalLineCounterApp
             if (!Path.IsPathFullyQualified(fileName))
             {
                 _logger.LogError($"Supplied filePath must be absolute: {fileName}");
-                return Task.FromResult(1);
+                return Task.FromResult(-1);
             }
 
             Models.ImageData imageData = _loader.Load(fileName);
@@ -43,7 +43,7 @@ namespace TMMCVerticalLineCounterApp
 
             _logger.LogInformation($"Number of vertical bars in {fileName} is {count}!");
 
-            return Task.CompletedTask;
+            return Task.FromResult(count);
         }
     }
 }

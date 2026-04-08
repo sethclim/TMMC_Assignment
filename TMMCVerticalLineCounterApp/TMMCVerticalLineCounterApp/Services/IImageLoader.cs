@@ -2,7 +2,7 @@
 
 namespace TMMCVerticalLineCounterApp.Services
 {
-    internal interface IImageLoader
+    public interface IImageLoader
     {
         ImageData Load(string path);
     }

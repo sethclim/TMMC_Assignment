@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents raw image data including width, height, and RGBA pixels.
     /// </summary>
-    internal class ImageData
+    public class ImageData
     {
         public int Width { get; set; }
         public int Height { get; set; }
